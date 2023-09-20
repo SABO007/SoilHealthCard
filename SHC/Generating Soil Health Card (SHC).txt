@@ -1,0 +1,29 @@
+Generating Soil Health Card (SHC)
+
+Requirements: Farmer's details, Farm details.
+
+Technical requirements: 
+Soil Macronutrients like Nitrogen, Phosphorous, Potassium, Temperature, Moisture, Ph, Electric Conductivity, and Soil sample Image.
+
+
+Python Scripting steps:
+
+1. Crop Prediction: 
+Taking all these parameters as input and predicting the crop suitable for that soil. We extract the parameters using a device called RS485, ESP32.
+A crop prediction dataset is extracted directly from Kaggle. 
+ML models will be trained on that data and the trained model will be used to predict the crop. Among many classifiers, the classifier giving the best performance metrics will be chosen.
+We used an ensemble bagging classifier called RandomForestClassifier which is built using DecisionTreeClassifier.
+
+2. Fertilizer Prediction:
+Fertilizer prediction also requires most of the crop prediction features. We even need to give the crop that is grown there. A fertilizer prediction based on a crop dataset is extracted directly from Kaggle. 
+ML models will be trained on that data and the trained model will be used to predict the fertilizer. As of now, a random crop type is taken. Among many classifiers, the classifier giving the best performance metrics will be chosen.
+We even used RandomForestClassifier in this.
+
+3. Soil Type Prediction:
+For the soil type prediction, we need a soil sample image. A CNN is used for feature extraction from images. The extracted features will be compared to a '.h5' file where trained data has been stored. Using this approach, the soil type will be predicted.
+
+Integration of all these predictions to our Soil Health Card:
+We create a Soil Health Card instantly in such a way that we show the farmer's details and farm land's details. 
+Then all the predicted values will be integrated. Now based on the standard range of all the parameters we will be rating the soil whether the values are Low, Medium, or High. 
+
+We do all this using Pandas DataFrame. Now, we convert the data frame to an HTML template, and then using the Pisa library we convert and concatenate all the html files and print a final Soil Health Card pdf.
