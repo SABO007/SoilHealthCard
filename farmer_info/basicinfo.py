@@ -2,7 +2,7 @@ import pandas as pd
 import argparse
 import csv
 
-ssd = pd.read_csv('farmer_details.csv',header=None, encoding='utf-8')
+ssd = pd.read_csv('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\farmer_info\\farmer_details.csv',header=None, encoding='ISO-8859-1')
 
 ssd.columns=['Name','Email Id','Address','Geo Position (GPS)','Date of Sample Collection','Survey No., Khasra No,/ Dag No,','Farm Size']
 
@@ -25,7 +25,6 @@ for i in range(len(ssd)):
     I=str(i+1)
     F=f+I
     Lst.append(F)
-print(Lst)
 
 SSD1.columns=Lst
 SSD2.columns=Lst

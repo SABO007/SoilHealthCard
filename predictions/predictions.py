@@ -3,8 +3,10 @@ import pandas as pd
 columns=['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous', 'Potassium',
        'pH', 'Electric Conductivity']
 
-details = pd.read_csv('input.csv',header=None)
+details = pd.read_csv('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\predictions\\input.csv',header=None)
 details.columns=columns
+print(details)
+
 input = details.copy()
 
 input['Nitrogen']= 1.35*10*details['Nitrogen']
@@ -15,8 +17,8 @@ input['Electric Conductivity']= 0.1*details['Electric Conductivity']
 
 
 
-input=pd.DataFrame(columns=['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous', 'Potassium',
-       'pH', 'Electric Conductivity'])
+input=input[['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous', 'Potassium',
+       'pH', 'Electric Conductivity']]
 
 input['Salinity']=input['Electric Conductivity']
 
@@ -27,8 +29,8 @@ input=input[['Nitrogen', 'Phosphorous', 'Potassium',
 
 parameters=input.columns
 
-inputs=input.iloc[0:1,:]
-
+# inputs=input.iloc[0:1,:]
+print(input)
 SHC=input.melt( 
         var_name="Parameter", 
         value_name="Test value")
@@ -142,10 +144,9 @@ def color_rating(val):
         color = 'black'
     return 'background-color: %s' % color
 
-print(SHC)
 # apply the function to the 'Rating' column and export the styled DataFrame as an HTML file
-SHC_c =SHC.style.applymap(color_rating, subset=['Rating'])
-# styled_df.to_file('styled_dataframe.html', render_links=True)
+SHC_c = SHC.style.map(color_rating, subset=['Rating'])
+
 
 import warnings
 import pandas as pd
@@ -156,7 +157,7 @@ warnings.filterwarnings("ignore", message="X has feature names, but RandomForest
 
 #Crop prediction
 import chardet
-input_crop=pd.read_csv('input.csv', header=None) #I am here
+input_crop=pd.read_csv('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\predictions\\input.csv', header=None) #I am here
 
 
 input_crop.columns=['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous','Potassium', 'pH', 'ElectricalConductivity']
@@ -184,7 +185,7 @@ user_crop=ferti_le.transform(user_crop)
 import random as rd
 import csv
 
-with open('input.csv', newline='') as input:
+with open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\predictions\\input.csv', newline='') as input:
     input_ferti = csv.reader(input)
     a = []
     for row in input_ferti:
@@ -225,8 +226,12 @@ img_tensor = image.img_to_array(img)
 img_tensor = np.expand_dims(img_tensor, axis=0)
 img_tensor /= 255.
 
+from tensorflow.keras.models import load_model
 
-model_soil=pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.pkl','rb'))
+# Load the model
+model_soil = load_model('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.h5')
+
+# model_soil=pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.pkl','rb'))
 
 arr = model_soil.predict(img_tensor, batch_size=377, verbose=1)
 res = np.argmax(arr, axis = -1)

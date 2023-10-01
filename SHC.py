@@ -1,5 +1,5 @@
-
-print(predict_cf)
+from farmer_info.basicinfo import Personal_Info, Farm_Info, ssd
+from predictions.predictions import predict_cf, SHC_c
 
 n=len(ssd)-1
 print("The Farmer Survey number taken is (Last Survey No.)",n+1)
@@ -45,7 +45,7 @@ html = html_template.substitute(html1=html1, html2=html2, html3=html3, html4=htm
 pdf = BytesIO()
 pisa.CreatePDF(BytesIO(html.encode('utf-8')), pdf)
 
-destination_folder = "C:\\Users\\Sasha\\OneDrive\\Desktop\\Plan-B (AI in Farming)\\SHC_external input\\"
+destination_folder = "C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\Card\\SHC_output"
 file_name = "SoilHealthCard.pdf"
 file_path = destination_folder + file_name
 
