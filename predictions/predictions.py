@@ -159,7 +159,6 @@ warnings.filterwarnings("ignore", message="X has feature names, but RandomForest
 import chardet
 input_crop=pd.read_csv('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\predictions\\input.csv', header=None) #I am here
 
-
 input_crop.columns=['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous','Potassium', 'pH', 'ElectricalConductivity']
 input_crop=input_crop[['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous','Potassium', 'pH']]
 
