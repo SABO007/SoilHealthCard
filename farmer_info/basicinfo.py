@@ -20,7 +20,7 @@ SSD1=ssd1.T
 SSD2=ssd2.T
 
 Lst=[]
-f='Farmer'
+f='User'
 for i in range(len(ssd)):
     I=str(i+1)
     F=f+I
@@ -28,6 +28,7 @@ for i in range(len(ssd)):
 
 SSD1.columns=Lst
 SSD2.columns=Lst
+
 
 Personal_Info=[]
 Farm_Info=[]
@@ -40,3 +41,6 @@ for i in range(len(ssd)):
     y=SSD2[[Lst[i]]]
     y=y.style.set_caption('Farm Details')
     Farm_Info.append(y)
+
+print(Farm_Info)
+print(Personal_Info)

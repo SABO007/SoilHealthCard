@@ -8,7 +8,6 @@ from io import StringIO, BytesIO
 from xhtml2pdf import pisa
 from string import Template as HTMLTemplate
 
-# Convert dataframes to HTML
 html1 = Personal_Info[n].to_html()
 html2 = Farm_Info[n].to_html()
 html3=predict_cf.to_html()

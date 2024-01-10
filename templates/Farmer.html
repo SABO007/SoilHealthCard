@@ -49,7 +49,7 @@
 
     <!-- Crop Details Form -->
     <form id="cropForm" method="post" action="{{ url_for('get_crop') }}">
-         <label for="soilImage">Upload Soil Image:</label>
+        <label for="soilImage">Upload Soil Image:</label>
         <input type="file" name="soilImage" id="soilImage" accept="image/*" required>
 
         <label for="nitrogen">Nitrogen:</label>
@@ -80,6 +80,10 @@
         <span id="responseValue"></span>
 
     </form>
+
+    <a href="/download_pdf" download="generated_pdf.pdf">
+        <button>Download PDF</button>
+    </a>
 
     <script>
         function submitForm(formId, tickId) {

@@ -133,9 +133,52 @@ def get_crop():
     df_cf['Type']=['Soil Type','Crop predicted','Fertilizer predicted']
     df_cf['Prediction']=[soil_type,predict_crop,predict_ferti]
 
-    farmer_html = farmer_details.to_html()
-    farm_html = farm_details.to_html()
-    cf_html=df_cf.to_html()
+    farmer_data=pd.DataFrame(columns=['Name', 'Email Id', 'Address'])
+    if farmer_data.empty:
+      farmer_data.loc[0] = farmer_details
+    else:
+        farmer_data = farmer_data.append(pd.Series(farmer_details, index=farmer_data.columns), ignore_index=True)
+
+
+    farm_data=pd.DataFrame(columns=['Date of Sample Collection', 'Survey No., Khasra No,/ Dag No,',
+       'Farm Size','Geo Position (GPS)'])
+    if farm_data.empty:
+      farm_data.loc[0] = farm_details
+    else:
+        farm_data = farm_data.append(pd.Series(farmer_details, index=farmer_data.columns), ignore_index=True)
+
+        
+    farmer_t=farmer_data.T
+    farm_t=farm_data.T
+
+    Lst=[]
+    f='User'
+    for i in range(len(farmer_data)):
+        I=str(i+1)
+        F=f+I
+        Lst.append(F)
+
+    farmer_t.columns=Lst
+    farm_t.columns=Lst
+
+
+    Farmer_Info=[]
+    Farm_Info=[]
+
+    for i in range(len(farmer_data)):
+        x=farmer_t[[Lst[i]]]
+        x = x.style.set_caption('Farmer Details')
+        Farmer_Info.append(x)
+
+        y=farm_t[[Lst[i]]]
+        y=y.style.set_caption('Farm Details')
+        Farm_Info.append(y)
+
+    print("Farmer info: ", x)
+    print("Farm info: ", y)
+    farmer_html = Farmer_Info[len(farmer_data)-1].to_html()
+    farm_html = Farm_Info[len(farmer_data)-1].to_html()
+    cf_html = df_cf.to_html()
     shc_html = SHC_c.to_html()
 
     
@@ -166,9 +209,15 @@ def get_crop():
 
     
     # Convert HTML to PDF
+    global pdf
     pdf = BytesIO()
     pisa.CreatePDF(BytesIO(html.encode('utf-8')), pdf)
     pdf.seek(0)
+
+    return "PDF generated!!"
+
+@app.route('/download_pdf')
+def download_pdf():
 
     return send_file(
         pdf,
@@ -178,15 +227,6 @@ def get_crop():
     )
 
 
-    
-
-    # return jsonify(
-    #     {
-    #         "message": "Crop details submitted successfully.",
-    #         "crop_prediction": [predict_crop],
-    #         "fertilizer_prediction": [predict_ferti],
-    #         "soil_type": [soil_type]
-    #     })
 
 
 if __name__ == '__main__':
