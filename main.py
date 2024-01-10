@@ -25,7 +25,7 @@ def get_farmer():
 
     # Perform any additional processing if needed
 
-    return jsonify({"success": True})
+    return jsonify(farmer_details)
 
 @app.route('/get_farm', methods=['POST'])
 def get_farm():
@@ -37,7 +37,7 @@ def get_farm():
     farm_details = [sampleCollectionDate, surveyNumber, farmSize, geoPosition]
     print(farm_details)
 
-    return jsonify({"success": True})
+    return jsonify(farm_details)
 
 @app.route('/get_crop', methods=['POST'])
 def get_crop():
@@ -60,6 +60,7 @@ def get_crop():
 
     crop_sc=crop_mms.transform(crop)
     predict_crop=model_crop.predict(crop_sc)
+    predict_crop=predict_crop[0]
     print(predict_crop)
 
     #Fertiliser prediction
@@ -74,6 +75,7 @@ def get_crop():
 
     ferti_sc=ferti_mms.transform(ferti)
     predict_ferti=model_ferti.predict(ferti_sc)
+    predict_ferti=predict_ferti[0]
     print(predict_ferti)
 
     #SoilType prediction
@@ -114,7 +116,13 @@ def get_crop():
     print(soil_type)
 
 
-    return jsonify({"message": "Crop details submitted successfully."})
+    return jsonify(
+        {
+            "message": "Crop details submitted successfully.",
+            "crop_prediction": [predict_crop],
+            "fertilizer_prediction": [predict_ferti],
+            "soil_type": [soil_type]
+        })
 
 if __name__ == '__main__':
     app.run(debug=True)
