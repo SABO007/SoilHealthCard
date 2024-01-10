@@ -222,7 +222,7 @@ def download_pdf():
     return send_file(
         pdf,
         mimetype='application/pdf',
-        download_name='generated_pdf.pdf',
+        download_name='Soil Health Card.pdf',
         as_attachment=True
     )
 
