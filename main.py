@@ -1,12 +1,24 @@
-from flask import Flask, render_template, request, jsonify
+# Flask
+from flask import Flask, render_template, request, jsonify, send_file
 import pickle
+
+# Model prediction
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import logging
 import keras.utils as image
 import sys
 import numpy as np
+import pandas as pd
 import os
+
+# SHC Generation
+from io import StringIO, BytesIO
+from xhtml2pdf import pisa
+from string import Template as HTMLTemplate
+
+# SHC Format
+from predictions.predictions import SHC_c
 
 app = Flask(__name__)
 
@@ -20,12 +32,12 @@ def get_farmer():
     farmer_mailid = request.form.get('farmerEmail')
     farmer_address = request.form.get('farmerAddress')
 
+    global farmer_details
     farmer_details = [farmer_name, farmer_mailid, farmer_address]
     print(farmer_details)
 
-    # Perform any additional processing if needed
+    return "Farmer details submitted successfully!"
 
-    return jsonify(farmer_details)
 
 @app.route('/get_farm', methods=['POST'])
 def get_farm():
@@ -34,10 +46,11 @@ def get_farm():
     farmSize = request.form.get('farmSize')
     geoPosition = request.form.get('geoPosition')
 
+    global farm_details
     farm_details = [sampleCollectionDate, surveyNumber, farmSize, geoPosition]
     print(farm_details)
 
-    return jsonify(farm_details)
+    return "Farm details submitted successfully!"
 
 @app.route('/get_crop', methods=['POST'])
 def get_crop():
@@ -115,14 +128,66 @@ def get_crop():
     soil_type=soil_type[0]
     print(soil_type)
 
+    # Crop fertilizer Dataframe
+    df_cf=pd.DataFrame(columns=['Type','Prediction'])
+    df_cf['Type']=['Soil Type','Crop predicted','Fertilizer predicted']
+    df_cf['Prediction']=[soil_type,predict_crop,predict_ferti]
 
-    return jsonify(
-        {
-            "message": "Crop details submitted successfully.",
-            "crop_prediction": [predict_crop],
-            "fertilizer_prediction": [predict_ferti],
-            "soil_type": [soil_type]
-        })
+    farmer_html = farmer_details.to_html()
+    farm_html = farm_details.to_html()
+    cf_html=df_cf.to_html()
+    shc_html = SHC_c.to_html()
+
+    
+    # Create HTML template
+    html_template = HTMLTemplate('''
+    <html>
+        <head>
+        <style>
+            table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+            }
+        </style>
+        </head>
+        <body>
+        <h1>Farmer Information</h1>
+        $html1
+        $html2
+        <h1>Soil Health Card</h1>
+        $html3
+        $html4
+        </body>
+    </html>
+    ''')
+
+    html = html_template.substitute(html1=farmer_html, html2=farm_html, html3=cf_html, html4=shc_html)
+
+    
+    # Convert HTML to PDF
+    pdf = BytesIO()
+    pisa.CreatePDF(BytesIO(html.encode('utf-8')), pdf)
+    pdf.seek(0)
+
+    return send_file(
+        pdf,
+        mimetype='application/pdf',
+        download_name='generated_pdf.pdf',
+        as_attachment=True
+    )
+
+
+    
+
+    # return jsonify(
+    #     {
+    #         "message": "Crop details submitted successfully.",
+    #         "crop_prediction": [predict_crop],
+    #         "fertilizer_prediction": [predict_ferti],
+    #         "soil_type": [soil_type]
+    #     })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
