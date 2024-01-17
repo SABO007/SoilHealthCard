@@ -1,6 +1,7 @@
 # Flask
 from flask import Flask, render_template, request, jsonify, send_file
 import pickle
+from SHC.SHC import shc_generation
 
 # Model prediction
 import tensorflow as tf
@@ -16,9 +17,6 @@ import os
 from io import StringIO, BytesIO
 from xhtml2pdf import pisa
 from string import Template as HTMLTemplate
-
-# SHC Format
-from predictions.predictions import SHC_c
 
 app = Flask(__name__)
 
@@ -55,18 +53,22 @@ def get_farm():
 @app.route('/get_crop', methods=['POST'])
 def get_crop():
     soilImage = request.form.get('cropImage')
+    nitrogen = float(request.form.get('nitrogen'))
+    phosphorous = float(request.form.get('phosphorous'))
+    potassium = float(request.form.get('potassium'))
+    ph = float(request.form.get('ph'))
+    electricConductivity = float(request.form.get('electricConductivity'))
+    temperature = float(request.form.get('temperature'))
+    moisture = float(request.form.get('moisture'))
 
-    nitrogen = request.form.get('nitrogen')
-    phosphorous = request.form.get('phosphorous')
-    potassium = request.form.get('potassium')
-    ph = request.form.get('ph')
-    electricConductivity = request.form.get('electricConductivity')
-    salinity = request.form.get('salinity')
-    temperature = request.form.get('temperature')
-    moisture = request.form.get('moisture')
 
     #Crop prediction
     crop=[[temperature, moisture, nitrogen, phosphorous, potassium, ph]]
+
+    #SHC
+    global crop_SHC
+    crop_SHC=[temperature, moisture, nitrogen, phosphorous, potassium, ph, electricConductivity]
+
     
     model_crop = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_crop_prediction.pkl', 'rb'))
     crop_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_crop_mms.pkl', 'rb'))
@@ -134,6 +136,8 @@ def get_crop():
     df_cf['Prediction']=[soil_type,predict_crop,predict_ferti]
 
     farmer_data=pd.DataFrame(columns=['Name', 'Email Id', 'Address'])
+    
+    global farm_details
     if farmer_data.empty:
       farmer_data.loc[0] = farmer_details
     else:
@@ -142,6 +146,8 @@ def get_crop():
 
     farm_data=pd.DataFrame(columns=['Date of Sample Collection', 'Survey No., Khasra No,/ Dag No,',
        'Farm Size','Geo Position (GPS)'])
+    
+    global farm_details
     if farm_data.empty:
       farm_data.loc[0] = farm_details
     else:
@@ -179,7 +185,15 @@ def get_crop():
     farmer_html = Farmer_Info[len(farmer_data)-1].to_html()
     farm_html = Farm_Info[len(farmer_data)-1].to_html()
     cf_html = df_cf.to_html()
-    shc_html = SHC_c.to_html()
+    
+    columns=['Temperature', 'Moisture', 'Nitrogen', 'Phosphorous', 'Potassium',
+        'pH', 'Electric Conductivity']
+    details=pd.DataFrame(columns=columns)
+    details.loc[0]= crop_SHC
+
+    shc_generation
+
+    shc_html = shc_generation(details).to_html()
 
     
     # Create HTML template
