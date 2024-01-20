@@ -48,7 +48,8 @@
     </form>
 
     <!-- Crop Details Form -->
-    <form id="cropForm" method="post" action="{{ url_for('get_crop') }}">
+    <form id="cropForm" method="post" action="{{ url_for('get_crop') }}" enctype="multipart/form-data">
+        
         <label for="soilImage">Upload Soil Image:</label>
         <input type="file" name="soilImage" id="soilImage" accept="image/*" required>
 
@@ -84,31 +85,24 @@
 
     <script>
         function submitForm(formId, tickId) {
-            var form = $('#' + formId);
-    
-            $.ajax({
-                type: form.attr('method'),
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(response) {
-                    console.log(response);
-    
-                    // Display the tick mark
-                    $('#' + tickId).text('✔');
-                    $('#' + tickId).show();
-    
-                    // Display the returned value
-                    $('#responseValue').text(JSON.stringify(response));
-                    $('#responseValue').show();
-    
-                    // Disable form inputs
-                    form.find(':input').prop('disabled', true);
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        }
+        var form = $('#' + formId);
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                // Your success handling code
+            },
+            error: function(error) {
+                // Your error handling code
+            }
+        });
+    }
+
     </script>
     
 </body>

@@ -50,9 +50,14 @@ def get_farm():
 
     return "Farm details submitted successfully!"
 
-@app.route('/get_crop', methods=['POST'])
+@app.route('/get_crop', methods=['GET','POST'])
 def get_crop():
-    soilImage = request.form.get('cropImage')
+    app.config['UPLOAD_FOLDER']='uploads'
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
+
+    soilImage = request.files.get('soilImage')
+    print('Soil image: ', soilImage)
+
     nitrogen = float(request.form.get('nitrogen'))
     phosphorous = float(request.form.get('phosphorous'))
     potassium = float(request.form.get('potassium'))
@@ -61,6 +66,12 @@ def get_crop():
     temperature = float(request.form.get('temperature'))
     moisture = float(request.form.get('moisture'))
 
+    soil_details = [soilImage, nitrogen, phosphorous, potassium, ph, electricConductivity, temperature, moisture]
+    print(soil_details)
+
+    # Save image
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'Uploaded Image')
+    soilImage.save(image_path)
 
     #Crop prediction
     crop=[[temperature, moisture, nitrogen, phosphorous, potassium, ph]]
@@ -70,8 +81,8 @@ def get_crop():
     crop_SHC=[temperature, moisture, nitrogen, phosphorous, potassium, ph, electricConductivity]
 
     
-    model_crop = pickle.load(open('PickledModels/model_crop_prediction.pkl', 'rb'))
-    crop_mms = pickle.load(open('PickledModels/model_crop_mms.pkl', 'rb'))
+    model_crop = pickle.load(open('saved models/model_crop_prediction.pkl', 'rb'))
+    crop_mms = pickle.load(open('saved models/model_crop_mms.pkl', 'rb'))
 
     crop_sc=crop_mms.transform(crop)
     predict_crop=model_crop.predict(crop_sc)
@@ -80,27 +91,20 @@ def get_crop():
 
     #Fertiliser prediction
     user_crop=['Sugarcane', 'Millets', 'Cotton', 'Paddy', 'Wheat', 'Oil seeds', 'Ground Nuts', 'Pulses', 'Barley', 'Tobacco', 'Maize']
-    ferti_le = pickle.load(open('PickledModels/model_ferti_le.pkl', 'rb'))
+    ferti_le = pickle.load(open('saved models/model_ferti_le.pkl', 'rb'))
     user_crop=ferti_le.transform(user_crop)
 
     ferti=[[temperature, moisture, user_crop[0], nitrogen, phosphorous, potassium]]
 
-    model_ferti = pickle.load(open('PickledModels/model_ferti_prediction.pkl', 'rb'))
-    ferti_mms = pickle.load(open('PickledModels/model_ferti_mms.pkl', 'rb'))
+    model_ferti = pickle.load(open('saved models/model_ferti_prediction.pkl', 'rb'))
+    ferti_mms = pickle.load(open('saved models/model_ferti_mms.pkl', 'rb'))
 
     ferti_sc=ferti_mms.transform(ferti)
     predict_ferti=model_ferti.predict(ferti_sc)
     predict_ferti=predict_ferti[0]
     print(predict_ferti)
 
-    if 'soilImage' in request.files:
-        soil_image = request.files['soilImage']
-        if soil_image.filename != '':
-            # Save the image to the upload folder
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], soil_image.filename)
-            soil_image.save(image_path)
-
-    img_path = 'resources/current_soilimage.jpg'
+    img_path = 'uploads/Uploaded Image'
     img = image.load_img(img_path, target_size=(256, 256))
     img_tensor = image.img_to_array(img)
     img_tensor = np.expand_dims(img_tensor, axis=0)
@@ -108,7 +112,7 @@ def get_crop():
 
 
     # Load the model
-    model_soil = load_model('PickledModels/model_soil_detection.h5')
+    model_soil = load_model('saved models/model_soil_detection.h5')
 
     arr = model_soil.predict(img_tensor, batch_size=377, verbose=1)
     res = np.argmax(arr, axis = -1)
@@ -118,11 +122,11 @@ def get_crop():
     elif(res == 1): 
         soil_type.append('Loam')
     elif(res == 2): 
-        soil_type.append('Loamy_Sand')
+        soil_type.append('Loamy Sand')
     elif(res == 3): 
         soil_type.append('Sand')
     elif(res == 4): 
-        soil_type.append('Sandy_Loam')
+        soil_type.append('Sandy Loam')
 
     soil_type=soil_type[0]
     print(soil_type)
@@ -235,7 +239,6 @@ def download_pdf():
         download_name='Soil Health Card.pdf',
         as_attachment=True
     )
-
 
 
 

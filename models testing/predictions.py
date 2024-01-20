@@ -17,8 +17,8 @@ X_exp_crop=input_crop.loc[0]
 X_exp_crop=[X_exp_crop]
 
 import pickle
-model_crop = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_crop_prediction.pkl', 'rb'))
-crop_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_crop_mms.pkl', 'rb'))
+model_crop = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_crop_prediction.pkl', 'rb'))
+crop_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_crop_mms.pkl', 'rb'))
 
 X_exp_crop_sc=crop_mms.transform(X_exp_crop)
 predict_crop=model_crop.predict(input_crop)
@@ -28,7 +28,7 @@ predict_crop=model_crop.predict(input_crop)
 # Taking Random input and crop name for Fertilizer prediction
 user_crop=['Sugarcane', 'Millets', 'Cotton', 'Paddy', 'Wheat', 'Oil seeds', 'Ground Nuts', 'Pulses', 'Barley', 'Tobacco', 'Maize']
 
-ferti_le = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_ferti_le.pkl', 'rb'))
+ferti_le = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_ferti_le.pkl', 'rb'))
 user_crop=ferti_le.transform(user_crop)
 
 import random as rd
@@ -47,8 +47,8 @@ with open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\predictions\\inp
 
 x_exp_ferti=a
 
-model_ferti = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_ferti_prediction.pkl', 'rb'))
-ferti_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_ferti_mms.pkl', 'rb'))
+model_ferti = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_ferti_prediction.pkl', 'rb'))
+ferti_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_ferti_mms.pkl', 'rb'))
 
 # Scaling 
 x_exp_ferti_sc=ferti_mms.transform(x_exp_ferti)
@@ -78,9 +78,9 @@ img_tensor /= 255.
 from tensorflow.keras.models import load_model
 
 # Load the model
-model_soil = load_model('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.h5')
+model_soil = load_model('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_soil_detection.h5')
 
-# model_soil=pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.pkl','rb'))
+# model_soil=pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\saved models\\model_soil_detection.pkl','rb'))
 
 arr = model_soil.predict(img_tensor, batch_size=377, verbose=1)
 res = np.argmax(arr, axis = -1)
