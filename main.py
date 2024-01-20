@@ -70,8 +70,8 @@ def get_crop():
     crop_SHC=[temperature, moisture, nitrogen, phosphorous, potassium, ph, electricConductivity]
 
     
-    model_crop = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_crop_prediction.pkl', 'rb'))
-    crop_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_crop_mms.pkl', 'rb'))
+    model_crop = pickle.load(open('PickledModels/model_crop_prediction.pkl', 'rb'))
+    crop_mms = pickle.load(open('PickledModels/model_crop_mms.pkl', 'rb'))
 
     crop_sc=crop_mms.transform(crop)
     predict_crop=model_crop.predict(crop_sc)
@@ -80,20 +80,19 @@ def get_crop():
 
     #Fertiliser prediction
     user_crop=['Sugarcane', 'Millets', 'Cotton', 'Paddy', 'Wheat', 'Oil seeds', 'Ground Nuts', 'Pulses', 'Barley', 'Tobacco', 'Maize']
-    ferti_le = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_ferti_le.pkl', 'rb'))
+    ferti_le = pickle.load(open('PickledModels/model_ferti_le.pkl', 'rb'))
     user_crop=ferti_le.transform(user_crop)
 
     ferti=[[temperature, moisture, user_crop[0], nitrogen, phosphorous, potassium]]
 
-    model_ferti = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_ferti_prediction.pkl', 'rb'))
-    ferti_mms = pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_ferti_mms.pkl', 'rb'))
+    model_ferti = pickle.load(open('PickledModels/model_ferti_prediction.pkl', 'rb'))
+    ferti_mms = pickle.load(open('PickledModels/model_ferti_mms.pkl', 'rb'))
 
     ferti_sc=ferti_mms.transform(ferti)
     predict_ferti=model_ferti.predict(ferti_sc)
     predict_ferti=predict_ferti[0]
     print(predict_ferti)
 
-    #SoilType prediction
     if 'soilImage' in request.files:
         soil_image = request.files['soilImage']
         if soil_image.filename != '':
@@ -101,7 +100,7 @@ def get_crop():
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], soil_image.filename)
             soil_image.save(image_path)
 
-    img_path = "C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\SHC_external input\\SoilSample2.jpg" #Uploaded file path
+    img_path = 'resources/current_soilimage.jpg'
     img = image.load_img(img_path, target_size=(256, 256))
     img_tensor = image.img_to_array(img)
     img_tensor = np.expand_dims(img_tensor, axis=0)
@@ -109,9 +108,7 @@ def get_crop():
 
 
     # Load the model
-    model_soil = load_model('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.h5')
-
-    # model_soil=pickle.load(open('C:\\Users\\Sasha\\OneDrive\\Desktop\\SoilHealthCard\\PickledModels\\model_soil_detection.pkl','rb'))
+    model_soil = load_model('PickledModels/model_soil_detection.h5')
 
     arr = model_soil.predict(img_tensor, batch_size=377, verbose=1)
     res = np.argmax(arr, axis = -1)
@@ -232,7 +229,6 @@ def get_crop():
 
 @app.route('/download_pdf')
 def download_pdf():
-
     return send_file(
         pdf,
         mimetype='application/pdf',
