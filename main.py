@@ -66,8 +66,29 @@ def get_crop():
     temperature = float(request.form.get('temperature'))
     moisture = float(request.form.get('moisture'))
 
+    global farmer_details, farm_details, soil_details
     soil_details = [soilImage, nitrogen, phosphorous, potassium, ph, electricConductivity, temperature, moisture]
     print(soil_details)
+
+    # user_info updated
+    farmer_details_all=pd.read_csv('user_info/farmer_details.csv')
+    farm_details_all=pd.read_csv('user_info/farm_details.csv')
+    soil_details_all=pd.read_csv('user_info/soil_details.csv')
+
+    if farmer_details_all.empty & farm_details_all.empty & soil_details_all.empty:
+        farmer_details_all.loc[0] = farmer_details
+        farm_details_all.loc[0] = farm_details
+        soil_details_all.loc[0] = soil_details[1:]
+    else:
+        farmer_details_all.loc[(len(farmer_details_all))] = farmer_details
+        farm_details_all.loc[(len(farm_details_all))] = farm_details
+        soil_details_all.loc[(len(soil_details_all))] = soil_details[1:]
+
+    farmer_details_all.to_csv('user_info/farmer_details.csv', index=False)
+    farm_details_all.to_csv('user_info/farm_details.csv', index=False)
+    soil_details_all.to_csv('user_info/soil_details.csv', index=False)
+
+
 
     # Save image
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'Uploaded Image')
@@ -138,7 +159,6 @@ def get_crop():
 
     farmer_data=pd.DataFrame(columns=['Name', 'Email Id', 'Address'])
     
-    global farm_details
     if farmer_data.empty:
       farmer_data.loc[0] = farmer_details
     else:
@@ -148,12 +168,10 @@ def get_crop():
     farm_data=pd.DataFrame(columns=['Date of Sample Collection', 'Survey No., Khasra No,/ Dag No,',
        'Farm Size','Geo Position (GPS)'])
     
-    global farm_details
     if farm_data.empty:
       farm_data.loc[0] = farm_details
     else:
-        farm_data = farm_data.append(pd.Series(farmer_details, index=farmer_data.columns), ignore_index=True)
-
+        farm_data = farm_data.append(pd.Series(farm_details, index=farmer_data.columns), ignore_index=True)
         
     farmer_t=farmer_data.T
     farm_t=farm_data.T
@@ -229,7 +247,7 @@ def get_crop():
     pisa.CreatePDF(BytesIO(html.encode('utf-8')), pdf)
     pdf.seek(0)
 
-    return "PDF generated!!"
+    return "PDF generated!!"    
 
 @app.route('/download_pdf')
 def download_pdf():
@@ -239,8 +257,6 @@ def download_pdf():
         download_name='Soil Health Card.pdf',
         as_attachment=True
     )
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
