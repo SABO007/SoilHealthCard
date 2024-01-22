@@ -91,7 +91,7 @@ def get_crop():
 
 
     # Save image
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'Uploaded Image')
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], f'Uploaded Image {len(farmer_details_all)}')
     soilImage.save(image_path)
 
     #Crop prediction
@@ -125,7 +125,7 @@ def get_crop():
     predict_ferti=predict_ferti[0]
     print(predict_ferti)
 
-    img_path = 'uploads/Uploaded Image'
+    img_path = f'uploads/Uploaded Image {len(farmer_details_all)}'
     img = image.load_img(img_path, target_size=(256, 256))
     img_tensor = image.img_to_array(img)
     img_tensor = np.expand_dims(img_tensor, axis=0)
