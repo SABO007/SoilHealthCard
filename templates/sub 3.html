@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Scan System</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Add a separate CSS file for styles -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #f6f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #2980b9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #219d53;
+        }
+
+        .download-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1><b>Soil Scan System</b></h1>
+    </header>
+
+    <div class="container">
+
+        <!-- Farmer Details Form -->
+        <form id="farmerForm" method="post" action="{{ url_for('get_farmer') }}">
+            <label for="farmerName">Farmer Name:</label>
+            <input type="text" name="farmerName" id="farmerName" required>
+
+            <label for="farmerEmail">Farmer Email:</label>
+            <input type="email" name="farmerEmail" id="farmerEmail" required>
+
+            <label for="farmerAddress">Farmer Address:</label>
+            <input type="text" name="farmerAddress" id="farmerAddress" required>
+
+            <input type="button" value="Submit Farmer Details" onclick="submitForm('farmerForm', 'farmerTick')">
+            <span id="farmerTick" class="tick-mark"></span>
+        </form>
+
+        <!-- Farm Details Form -->
+        <form id="farmForm" method="post" action="{{ url_for('get_farm') }}">
+            <label for="sampleCollectionDate">Date of Sample Collection:</label>
+            <input type="date" name="sampleCollectionDate" id="sampleCollectionDate" required>
+        
+            <label for="surveyNumber">Survey No., Khasra No./Dag No:</label>
+            <input type="text" name="surveyNumber" id="surveyNumber">
+        
+            <label for="farmSize">Farm Size:</label>
+            <input type="text" name="farmSize" id="farmSize" required>
+        
+            <label for="geoPosition">Geo Position (GPS):</label>
+            <input type="text" name="geoPosition" id="geoPosition">
+
+            <input type="button" value="Submit Farm Details" onclick="submitForm('farmForm', 'farmTick')">
+            <span id="farmTick" class="tick-mark"></span>
+        </form>
+
+        <!-- Crop Details Form -->
+        <form id="cropForm" method="post" action="{{ url_for('get_crop') }}" enctype="multipart/form-data">
+            
+            <label for="soilImage">Upload Soil Image:</label>
+            <input type="file" name="soilImage" id="soilImage" accept="image/*" required>
+
+            <label for="nitrogen">Nitrogen:</label>
+            <input type="text" name="nitrogen" id="nitrogen" required>
+
+            <label for="phosphorous">Phosphorous:</label>
+            <input type="text" name="phosphorous" id="phosphorous" required>
+
+            <label for="potassium">Potassium:</label>
+            <input type="text" name="potassium" id="potassium" required>
+
+            <label for="ph">pH:</label>
+            <input type="text" name="ph" id="ph" required>
+
+            <label for="electricConductivity">Electric Conductivity:</label>
+            <input type="text" name="electricConductivity" id="electricConductivity" required>
+
+            <label for="temperature">Temperature:</label>
+            <input type="text" name="temperature" id="temperature" required>
+
+            <label for="moisture">Moisture:</label>
+            <input type="text" name="moisture" id="moisture" required>
+            <input type="button" value="Submit Crop Details" onclick="submitForm('cropForm', 'cropTick')">
+            <span id="cropTick" class="tick-mark"></span>
+            <span id="responseValue"></span>
+
+        </form>
+
+        <a href="/download_pdf" download="SoilHealthCard.pdf" class="download-btn">Download Soil Health Card</a>
+
+    </div>
+
+    <script>
+        function submitForm(formId, tickId) {
+        var form = $('#' + formId);
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                // Your success handling code
+            },
+            error: function(error) {
+                // Your error handling code
+            }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
