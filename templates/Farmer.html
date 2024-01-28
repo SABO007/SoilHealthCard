@@ -10,7 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body {
-            background-color: #f6f9fc;
+            background-color: #F5F5F5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
@@ -160,7 +160,7 @@
                 <label for="sampleCollectionDate">Date of Sample Collection</label>
                 <input type="date" name="sampleCollectionDate" id="sampleCollectionDate" required max="<?= date('Y-m-d') ?>">
             
-                <label for="surveyNumber">Survey No</label>
+                <label for="Land surveyNumber">Survey No</label>
                 <input type="text" name="surveyNumber" id="surveyNumber">
             
                 <label for="farmSize">Farm Size</label>
@@ -181,26 +181,27 @@
                 <label for="soilImage">Upload Soil Image</label>
                 <input type="file" name="soilImage" id="soilImage" accept="image/*" required>
 
-                <label for="nitrogen">Nitrogen</label>
+                <label for="nitrogen">Nitrogen (Kg/ha)</label>
                 <input type="text" name="nitrogen" id="nitrogen" required>
 
-                <label for="phosphorous">Phosphorous</label>
+                <label for="phosphorous">Phosphorous (kg/ha)</label>
                 <input type="text" name="phosphorous" id="phosphorous" required>
 
-                <label for="potassium">Potassium</label>
+                <label for="potassium">Potassium (kg/ha)</label>
                 <input type="text" name="potassium" id="potassium" required>
 
-                <label for="ph">pH</label>
+                <label for="ph">pH (0-14)</label>
                 <input type="text" name="ph" id="ph" required>
 
-                <label for="electricConductivity">Electric Conductivity</label>
+                <label for="electricConductivity">Electric Conductivity (dS/m)</label>
                 <input type="text" name="electricConductivity" id="electricConductivity" required>
 
-                <label for="temperature">Temperature</label>
+                <label for="temperature">Temperature (°Celcius)</label>
                 <input type="text" name="temperature" id="temperature" required>
 
-                <label for="moisture">Moisture</label>
+                <label for="moisture">Moisture (Relative humidity (%))</label>
                 <input type="text" name="moisture" id="moisture" required>
+
                 <input type="button" value="Submit Crop Details" onclick="submitForm('cropForm', 'cropTick')">
                 <span id="cropTick" class="tick-mark"></span>
                 <span id="responseValue"></span>
