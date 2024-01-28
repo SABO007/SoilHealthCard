@@ -203,7 +203,9 @@
                     // Your success handling code
                     $('#' + tickId).html('&#10004;');
                     $('#' + tickId).css('color', '#27ae60');
-                    $('#responseValue').html(response);},
+                    var lines = response.split('\n');
+                    $('#responseValue').html('<strong>' + lines.join('<br>') + '</strong>');
+                },
                 error: function(error) {
                     // Your error handling code
                     $('#' + tickId).html('&#10008;');

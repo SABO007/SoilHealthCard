@@ -247,7 +247,8 @@ def get_crop():
     pisa.CreatePDF(BytesIO(html.encode('utf-8')), pdf)
     pdf.seek(0)
 
-    return "PDF generated!!"    
+    return jsonify(f"\n Suggested Crop: {predict_crop}\n   Suggested Fertilizer: {predict_ferti}\n     Detected Soil Type: {soil_type}")
+
 
 @app.route('/download_pdf')
 def download_pdf():
