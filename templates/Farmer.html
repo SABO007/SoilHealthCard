@@ -92,10 +92,14 @@
         .download-btn:hover {
             background-color: #001F3F;
         }
+
         #responseValue {
-        font-size: 28px; 
-        color: #333; 
+            display: block;
+            margin-top: 20px;
+            font-size: 28px;
+            color: #001F3F;
         }
+
         .tick-mark {
             font-size: 28px;
             color: #333;
@@ -131,6 +135,7 @@
 
         <div class="form-section">
             <!-- Farm Details Form -->
+            
             <form id="farmForm" method="post" action="{{ url_for('get_farm') }}">
                 <label for="sampleCollectionDate">Date of Sample Collection</label>
                 <input type="date" name="sampleCollectionDate" id="sampleCollectionDate" required max="<?= date('Y-m-d') ?>">
