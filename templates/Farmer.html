@@ -29,7 +29,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 20px auto;
             background-color: #fff;
             padding: 20px;
@@ -48,7 +48,7 @@
         label {
             display: block;
             margin-bottom: 12px;
-            font-size: 16px;
+            font-size: 22px;
             font-weight: bold;
         }
 
@@ -59,14 +59,13 @@
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 22px;
         }
 
         button {
             background-color: #27ae60;
             color: #fff;
             padding: 12px 24px;
-            border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 18px;
@@ -84,14 +83,18 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 24px;
             text-decoration: none;
             display: inline-block;
             transition: background-color 0.3s ease;
         }
 
         .download-btn:hover {
-            background-color: #bc6003;
+            background-color: #001F3F;
+        }
+        #responseValue {
+        font-size: 28px; 
+        color: #333; 
         }
     </style>
 </head>
@@ -106,33 +109,34 @@
         <div class="form-section">
             <!-- Farmer Details Form -->
             <form id="farmerForm" method="post" action="{{ url_for('get_farmer') }}">
-                <label for="farmerName">Farmer Name:</label>
+                <label for="farmerName">Farmer Name</label>
                 <input type="text" name="farmerName" id="farmerName" required>
 
-                <label for="farmerEmail">Farmer Email:</label>
+                <label for="farmerEmail">Farmer Email</label>
                 <input type="email" name="farmerEmail" id="farmerEmail" required>
 
-                <label for="farmerAddress">Farmer Address:</label>
+                <label for="farmerAddress">Farmer Address</label>
                 <input type="text" name="farmerAddress" id="farmerAddress" required>
 
                 <input type="button" value="Submit Farmer Details" onclick="submitForm('farmerForm', 'farmerTick')">
                 <span id="farmerTick" class="tick-mark"></span>
+                
             </form>
         </div>
 
         <div class="form-section">
             <!-- Farm Details Form -->
             <form id="farmForm" method="post" action="{{ url_for('get_farm') }}">
-                <label for="sampleCollectionDate">Date of Sample Collection:</label>
+                <label for="sampleCollectionDate">Date of Sample Collection</label>
                 <input type="date" name="sampleCollectionDate" id="sampleCollectionDate" required max="<?= date('Y-m-d') ?>">
             
-                <label for="surveyNumber">Survey No:</label>
+                <label for="surveyNumber">Survey No</label>
                 <input type="text" name="surveyNumber" id="surveyNumber">
             
-                <label for="farmSize">Farm Size:</label>
+                <label for="farmSize">Farm Size</label>
                 <input type="text" name="farmSize" id="farmSize" required>
             
-                <label for="geoPosition">Geo Position (GPS):</label>
+                <label for="geoPosition">Geo Position (GPS)</label>
                 <input type="text" name="geoPosition" id="geoPosition">
 
                 <input type="button" value="Submit Farm Details" onclick="submitForm('farmForm', 'farmTick')">
@@ -144,33 +148,32 @@
             <!-- Crop Details Form -->
             <form id="cropForm" method="post" action="{{ url_for('get_crop') }}" enctype="multipart/form-data">
                 
-                <label for="soilImage">Upload Soil Image:</label>
+                <label for="soilImage">Upload Soil Image</label>
                 <input type="file" name="soilImage" id="soilImage" accept="image/*" required>
 
-                <label for="nitrogen">Nitrogen:</label>
+                <label for="nitrogen">Nitrogen</label>
                 <input type="text" name="nitrogen" id="nitrogen" required>
 
-                <label for="phosphorous">Phosphorous:</label>
+                <label for="phosphorous">Phosphorous</label>
                 <input type="text" name="phosphorous" id="phosphorous" required>
 
-                <label for="potassium">Potassium:</label>
+                <label for="potassium">Potassium</label>
                 <input type="text" name="potassium" id="potassium" required>
 
-                <label for="ph">pH:</label>
+                <label for="ph">pH</label>
                 <input type="text" name="ph" id="ph" required>
 
-                <label for="electricConductivity">Electric Conductivity:</label>
+                <label for="electricConductivity">Electric Conductivity</label>
                 <input type="text" name="electricConductivity" id="electricConductivity" required>
 
-                <label for="temperature">Temperature:</label>
+                <label for="temperature">Temperature</label>
                 <input type="text" name="temperature" id="temperature" required>
 
-                <label for="moisture">Moisture:</label>
+                <label for="moisture">Moisture</label>
                 <input type="text" name="moisture" id="moisture" required>
                 <input type="button" value="Submit Crop Details" onclick="submitForm('cropForm', 'cropTick')">
                 <span id="cropTick" class="tick-mark"></span>
                 <span id="responseValue"></span>
-
             </form>
         </div>
 
@@ -193,12 +196,17 @@
                 contentType: false,
                 success: function(response) {
                     // Your success handling code
-                },
+                    $('#' + tickId).html('&#10004;');
+                    $('#' + tickId).css('color', '#27ae60');
+                    $('#responseValue').html(response);},
                 error: function(error) {
                     // Your error handling code
+                    $('#' + tickId).html('&#10008;');
                 }
             });
-        } else {
+        } 
+        
+        else {
             // Display an error message or take appropriate action
             alert("Please fill out all required fields before submitting the form.");
         }

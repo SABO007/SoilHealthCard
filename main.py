@@ -47,7 +47,7 @@ def get_farm():
     global farm_details
     farm_details = [sampleCollectionDate, surveyNumber, farmSize, geoPosition]
     print(farm_details)
-
+    
     return "Farm details submitted successfully!"
 
 @app.route('/get_crop', methods=['GET','POST'])
