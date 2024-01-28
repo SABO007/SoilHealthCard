@@ -18,6 +18,16 @@ from io import StringIO, BytesIO
 from xhtml2pdf import pisa
 from string import Template as HTMLTemplate
 
+# SMTP
+from SMTP.smtp import send_email
+
+# env variable extraction
+from dotenv import load_dotenv
+from pathlib import Path
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
+
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -246,6 +256,22 @@ def get_crop():
     pdf = BytesIO()
     pisa.CreatePDF(BytesIO(html.encode('utf-8')), pdf)
     pdf.seek(0)
+    
+    with open("Card/soilhealthcard.pdf", 'wb') as f:
+        f.write(pdf.read())
+    
+    # SMTP
+    to_email = farmer_details[1]
+    subject = 'Generated Soil Health Report!'
+    body = 'Greetings User, Please find the attached soil health report.'
+    attachment_path = 'Card/soilhealthcard.pdf'
+    sender_email = 'sashankharry@gmail.com'
+    sender_password = os.getenv('EMAIL_PASSWORD')
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
+
+    # Send email
+    send_email(to_email, subject, body, attachment_path, sender_email, sender_password, smtp_server, smtp_port)
 
     return jsonify(f"Suggested Crop: <span style='color: red;'>{predict_crop}</span>\n   Suggested Fertilizer: <span style='color: red;'>{predict_ferti}</span>\n     Detected Soil Type: <span style='color: red;'>{soil_type}</span>")
 
