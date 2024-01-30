@@ -32,8 +32,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('Farmer.html')  # Renders the HTML file
-
+    return render_template('main.html')
 @app.route('/get_farmer', methods=['POST'])
 def get_farmer():
     farmer_name = request.form.get('farmerName')
