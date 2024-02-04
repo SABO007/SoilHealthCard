@@ -24,6 +24,9 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100px;
             color: #fff;
+            -webkit-text-stroke: 2px #000;
+            text-shadow: 2px 2px 0 #000;
+            border-bottom: black 4px solid;
             padding: 15px;
             font-size: 24px;
             border-bottom: 4px solid #fff;
@@ -109,6 +112,7 @@
 
         #logo img {
             height: 70px;
+            border: #000;
         }
 
         #title {
@@ -197,14 +201,12 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    // Your success handling code
                     $('#' + tickId).html('&#10004;');
                     $('#' + tickId).css('color', '#27ae60');
                     var lines = response.split('\n');
                     $('#responseValue').html('<strong>' + lines.join('<br>') + '</strong>');
                 },
                 error: function(error) {
-                    // Your error handling code
                     $('#' + tickId).html('&#10008;');
                 }
                 });
@@ -225,6 +227,21 @@
             }
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('info').addEventListener('click', function() {
+                window.location.href = "{{ url_for('info') }}";
+            });
+
+            document.getElementById('about_us').addEventListener('click', function() {
+                window.location.href = "{{ url_for('about_us') }}";
+            });
+
+            document.getElementById('sign_out').addEventListener('click', function() {
+                window.location.href = "{{ url_for('logout') }}";
+            });
+        });
+
+
     </script>
 
 </head>
@@ -238,7 +255,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container" id="main">
         <div class="form-section">
             <!-- Farmer Details Form -->
             <form id="farmerForm" method="post" action="{{ url_for('get_farmer') }}">
@@ -328,17 +345,17 @@
             <form>
                 <div>
                     <strong>
-                        <input type="button" value="Info">
+                        <input type="button" id="info" value="Info">
                     </strong>
                 </div>
                 <div>
                     <strong>
-                        <input type="button" value="About Us">
+                        <input type="button" id="about_us" value="About Us">
                     </strong>
                 </div>
                 <div>
                     <strong>
-                        <input type="button" value="Sign Out">
+                        <input type="button" id="sign_out" value="Sign Out">
                     </strong>
                 </div>
             </form>

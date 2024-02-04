@@ -1,5 +1,5 @@
 # Flask
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, redirect, session, url_for
 import pickle
 from SHC.SHC import shc_generation
 
@@ -27,12 +27,57 @@ from pathlib import Path
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
+import pyrebase
 
-app = Flask(__name__)
+app=Flask(__name__, template_folder='templates')
+config = {
+    "apiKey": "AIzaSyBcORtCnca_o90J4skz8qq4vaEuf4VdLbM",
+    "authDomain": "soil-scan-system.firebaseapp.com",
+    "projectId": "soil-scan-system",
+    "storageBucket": "soil-scan-system.appspot.com",
+    "messagingSenderId": "871665361075",
+    "appId": "1:871665361075:web:5984d83137bbbdb9c2d0c6",
+    "measurementId": "G-3RHFDD7KZF",
+    "databaseURL": "https://soil-scan-system-default-rtdb.firebaseio.com/"
+}
+
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
+
+app.secret_key = 'sabo'
 
 @app.route('/')
+def login():
+    return render_template('login.html')
+
+@app.route('/login_auth', methods=['POST','GET'])
+def login_auth():
+    if ('user' in session):
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        print(email, password)
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+            session['user'] = email
+            return redirect(url_for('index'))
+        
+        except:
+            return "Invalid credentials"
+
+@app.route('/index')
 def index():
-    return render_template('main.html')
+    template_name = request.endpoint.replace('.', '/') + '.html'
+    print("Reached the index function")
+    return render_template(template_name)
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
+
 @app.route('/get_farmer', methods=['POST'])
 def get_farmer():
     farmer_name = request.form.get('farmerName')
@@ -283,5 +328,14 @@ def download_pdf():
         as_attachment=True
     )
 
+@app.route('/info')
+def info():
+    return render_template('info.html')
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=1111, debug=True)

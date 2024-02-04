@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Scan System (Login)</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        header {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #27ae60;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100px;
+            color: #fff;
+            -webkit-text-stroke: 2px #000;
+            text-shadow: 2px 2px 0 #000;
+            border-bottom: black 4px solid;
+            padding-bottom: 5px;
+            padding: 15px;
+            font-size: 24px;
+            border-bottom: 4px solid #fff;
+        }
+
+        #logo {
+            position: absolute;
+            right: 80px;
+        }
+
+        #logo img {
+            height: 70px;
+            border: #000;
+        }
+
+        .login-container {
+            left: auto;
+            right: auto;    
+            position: absolute; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: auto;
+            width: 600px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            display: flex;
+            text-decoration: solid;
+            color: #fff;
+            -webkit-text-stroke: 2px #000;
+            text-shadow: 2px 2px 0 #000;
+            border-bottom: black 4px solid;
+            padding-bottom: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-bottom: 12px;
+            font-size: 40px;
+            font-weight: bold;
+            padding: auto;
+        }
+
+        .login-container button {
+            background-color: #27ae60;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 32px;
+            transition: background-color 0.3s ease;
+        }
+        .login-container button:hover {
+            background-color: #2ecc71;
+        }
+
+        #loginForm {
+            align-items: center;
+            margin: 28px;
+        }
+
+        #loginForm label {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        #loginForm input {
+            font-size: 32px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        #loginForm .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <script>
+        function submitForm(formId, tickId) {
+        var form = $('#' + formId);
+
+        if (form[0].checkValidity()) {
+            var formData = new FormData(form[0]);
+
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {},
+                error: function(error) {}
+                });
+            } 
+            
+            else {
+                alert("Please fill out all required fields before submitting the form.");
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+    <header>
+        <h1>Soil Scan System</h1>
+        <div id="logo">
+            <img src="https://www.clipartkey.com/mpngs/m/59-590475_soil-seeds-clipart-healthy-for-free-and-use.png" alt="Logo">
+        </div>
+    </header>
+
+    <div class="login-container" id="login">
+        <h2>Login</h2>
+            <!-- Login Form -->
+            <form id="loginForm" action="{{url_for('login_auth') }}" method="post">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="button" id="sign_in" onclick="submitForm('loginForm')">Sign In</button>
+                    <!-- <span id="loginresponseValue"></span> -->
+            </form>
+    </div>
+
+</body>
+</html>
