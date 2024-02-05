@@ -50,9 +50,10 @@ app.secret_key = 'sabo'
 def login():
     return render_template('login.html')
 
-@app.route('/login_auth', methods=['POST','GET'])
+
+@app.route('/login', methods=['GET', 'POST'])
 def login_auth():
-    if ('user' in session):
+    if 'user' in session:
         return redirect(url_for('index'))
 
     if request.method == 'POST':
@@ -62,16 +63,15 @@ def login_auth():
         try:
             user = auth.sign_in_with_email_and_password(email, password)
             session['user'] = email
-            return redirect(url_for('index'))
+            return  redirect(url_for('index'))
         
-        except:
-            return "Invalid credentials"
+        except Exception as e:
+            print("Invalid credentials:", str(e))
+            return redirect(url_for('login'))
 
 @app.route('/index')
 def index():
-    template_name = request.endpoint.replace('.', '/') + '.html'
-    print("Reached the index function")
-    return render_template(template_name)
+    return render_template("index.html")
 
 @app.route('/logout')
 def logout():
@@ -338,4 +338,4 @@ def about_us():
 
 
 if __name__ == '__main__':
-    app.run(port=1111, debug=True)
+    app.run(debug=True)

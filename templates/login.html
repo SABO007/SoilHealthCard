@@ -107,7 +107,8 @@
     </style>
 
     <script>
-        function submitForm(formId, tickId) {
+    
+        function submitLoginForm(formId) {
         var form = $('#' + formId);
 
         if (form[0].checkValidity()) {
@@ -119,15 +120,26 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {},
-                error: function(error) {}
-                });
-            } 
-            
-            else {
-                alert("Please fill out all required fields before submitting the form.");
-            }
+                success: function(response, status, xhr) {
+                    if (xhr.status === 200 && response.route === 'index') {
+                        console.log('Success');
+                        window.location.replace('index');
+                    }
+                    else {
+                        console.log('Error');
+                        alert("Invalid email or password. Please try again.");
+                    }
+                },
+                error: function(error) {
+                    console.log('Error');
+                    alert("Invalid email or password. Please try again.");
+                }
+            });
+        } else {
+            alert("Please fill out all required fields before submitting the form.");
         }
+    }
+
     </script>
 
 </head>
@@ -150,7 +162,7 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
 
-                    <button type="button" id="sign_in" onclick="submitForm('loginForm')">Sign In</button>
+                    <button type="button" id="sign_in" onclick="submitLoginForm('loginForm')">Sign In</button>
                     <!-- <span id="loginresponseValue"></span> -->
             </form>
     </div>
