@@ -11,6 +11,8 @@ import keras.utils as image
 import sys
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import os
 
 # SHC Generation
@@ -30,18 +32,21 @@ load_dotenv(dotenv_path=env_path)
 import pyrebase
 
 app=Flask(__name__, template_folder='templates')
-config = {
-    "apiKey": "AIzaSyBcORtCnca_o90J4skz8qq4vaEuf4VdLbM",
-    "authDomain": "soil-scan-system.firebaseapp.com",
-    "projectId": "soil-scan-system",
-    "storageBucket": "soil-scan-system.appspot.com",
-    "messagingSenderId": "871665361075",
-    "appId": "1:871665361075:web:5984d83137bbbdb9c2d0c6",
-    "measurementId": "G-3RHFDD7KZF",
-    "databaseURL": "https://soil-scan-system-default-rtdb.firebaseio.com/"
+
+# Firebase
+firebase_config = {
+    "apiKey": os.environ.get('FIREBASE_API_KEY'),
+    "authDomain": os.environ.get('FIREBASE_AUTH_DOMAIN'),
+    "projectId": os.environ.get('FIREBASE_PROJECT_ID'),
+    "storageBucket": os.environ.get('FIREBASE_STORAGE_BUCKET'),
+    "messagingSenderId": os.environ.get('FIREBASE_MESSAGING_SENDER_ID'),
+    "appId": os.environ.get('FIREBASE_APP_ID'),
+    "measurementId": os.environ.get('FIREBASE_MEASUREMENT_ID'),
+    "databaseURL": os.environ.get('FIREBASE_DATABASE_URL')
 }
 
-firebase = pyrebase.initialize_app(config)
+firebase_config = os.getenv('FIREBASE_CONFIG')
+firebase = pyrebase.initialize_app(firebase_config)
 auth = firebase.auth()
 
 app.secret_key = 'sabo'
@@ -51,23 +56,39 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login_auth', methods=['GET', 'POST'])
 def login_auth():
     if 'user' in session:
-        return redirect(url_for('index'))
+        return jsonify("Already logged in")
 
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        print(email, password)
         try:
             user = auth.sign_in_with_email_and_password(email, password)
             session['user'] = email
-            return  redirect(url_for('index'))
+            return  jsonify("Success")
         
         except Exception as e:
             print("Invalid credentials:", str(e))
-            return redirect(url_for('login'))
+            return jsonify("Invalid credentials")
+        
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
+@app.route('/register_auth', methods=['GET', 'POST'])
+def register_auth():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        try:
+            auth.create_user_with_email_and_password(email, password)
+            return jsonify("Success")
+        except Exception as e:
+            print("Error:", str(e))
+            return jsonify("Email exists")
 
 @app.route('/index')
 def index():
@@ -77,6 +98,19 @@ def index():
 def logout():
     session.pop('user', None)
     return redirect(url_for('login'))
+
+
+@app.route('/moreinfo')
+def moreinfo():
+    return render_template('moreinfo.html')
+
+@app.route('/info')
+def info():
+    return render_template('info.html')
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
 
 @app.route('/get_farmer', methods=['POST'])
 def get_farmer():
@@ -123,6 +157,22 @@ def get_crop():
     global farmer_details, farm_details, soil_details
     soil_details = [soilImage, nitrogen, phosphorous, potassium, ph, electricConductivity, temperature, moisture]
     print(soil_details)
+
+    
+    soil_low =    [280, 11, 120, 1, 0, 2, 20, 50]
+    soil_high = [560, 26, 280, 14, 2, 4, 30, 75]
+
+    dict = {
+        'Nitrogen': [soil_low[0], soil_details[1], soil_high[0]], 
+        'Phosphorous': [soil_low[1], soil_details[2], soil_high[1]],
+        'Potassium': [soil_low[2], soil_details[3], soil_high[2]],
+        'pH': [soil_low[3], soil_details[4], soil_high[3]],
+        'Electric Conductivity': [soil_low[4], soil_details[5], soil_high[4]],
+        'Temperature': [soil_low[5], soil_details[6], soil_high[5]],
+        'Moisture': [soil_low[6], soil_details[7], soil_high[6]]
+    }
+    from plot import plot
+    plot(dict)
 
     # user_info updated
     farmer_details_all=pd.read_csv('user_info/farmer_details.csv')
@@ -303,7 +353,7 @@ def get_crop():
     
     with open("Card/soilhealthcard.pdf", 'wb') as f:
         f.write(pdf.read())
-    
+        
     # SMTP
     to_email = farmer_details[1]
     subject = 'Generated Soil Health Report!'
@@ -321,20 +371,14 @@ def get_crop():
 
 @app.route('/download_pdf')
 def download_pdf():
+    with open("Card/soilhealthcard.pdf", 'rb') as f:
+            pdf = BytesIO(f.read())
     return send_file(
         pdf,
         mimetype='application/pdf',
         download_name='Soil Health Card.pdf',
         as_attachment=True
     )
-
-@app.route('/info')
-def info():
-    return render_template('info.html')
-
-@app.route('/about_us')
-def about_us():
-    return render_template('about_us.html')
 
 
 if __name__ == '__main__':

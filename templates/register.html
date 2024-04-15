@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soil Scan System (Login)</title>
+    <title>Soil Scan System (signup)</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         header {
@@ -37,11 +37,11 @@
             border: #000;
         }
 
-        .login-container {
+        .signup-container {
             left: auto;
             right: auto;    
             position: absolute; 
-            top: 50%;
+            top: 65%;
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: rgba(0, 0, 0, 0.1);
@@ -53,7 +53,7 @@
             text-align: center;
         }
 
-        .login-container h2 {
+        .signup-container h2 {
             display: flex;
             text-decoration: solid;
             color: #fff;
@@ -68,7 +68,7 @@
             padding: auto;
         }
 
-        .login-container button {
+        .signup-container button {
             background-color: #27ae60;
             color: #fff;
             padding: 12px 24px;
@@ -77,22 +77,22 @@
             font-size: 32px;
             transition: background-color 0.3s ease;
         }
-        .login-container button:hover {
+        .signup-container button:hover {
             background-color: #2ecc71;
         }
 
-        #loginForm {
+        #signupForm {
             align-items: center;
             margin: 28px;
         }
 
-        #loginForm label {
+        #signupForm label {
             display: block;
             font-size: 32px;
             margin-bottom: 8px;
         }
 
-        #loginForm input {
+        #signupForm input {
             font-size: 32px;
             padding: 12px;
             margin-bottom: 20px;
@@ -101,14 +101,14 @@
             border-radius: 6px;
         }
 
-        #loginForm .form-group {
+        #signupForm .form-group {
             margin-bottom: 20px;
         }
     </style>
 
     <script>
-        
-        function submitLoginForm(formId) {
+            
+        function submitsignupForm(formId) {
         var form = $('#' + formId);
 
         if (form[0].checkValidity()) {
@@ -121,18 +121,18 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    if (response === 'Success' || response === 'Already logged in') {
+                    if (response === 'Success') {
                         console.log('Success');
                         window.location.replace('index');
                     }
-                    else {
+                    else if (response === 'Email exists'){
                         console.log('Error');
-                        alert("Invalid email or password. Please try again.");
+                        alert("Email already exists. Please try again with a different email address");
                     }
                 },
                 error: function(error) {
                     console.log('Error');
-                    alert("Invalid email or password. Please try again.");
+                    alert("Email already exists. Please try again with a different email address.");
                 }
             });
         } else {
@@ -141,7 +141,7 @@
     }
 
     </script>
-    
+
 </head>
 
 <body>
@@ -152,19 +152,21 @@
         </div>
     </header>
 
-    <div class="login-container" id="login">
-        <h2>Login</h2>
-            <!-- Login Form -->
-            <form id="loginForm" action="{{url_for('login_auth') }}" method="post">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+    <div class="signup-container" id="signup">
+        <h2>Register</h2>
+            <!-- signup Form -->
+            <form id="signupForm" action="{{url_for('register_auth') }}" method="post">
+                    
+                <label for="name">Name</label>
+                <input type="name" id="name" name="name" required>
 
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
 
-                    <button type="button" id="sign_in" onclick="submitLoginForm('loginForm')">Sign In</button>
-                    <!-- <span id="loginresponseValue"></span> -->
-                    <p>Don't have an account? <a href="register">Register</a></p>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="button" id="sign_up" onclick="submitsignupForm('signupForm')">Sign Up</button>
             </form>
     </div>
 
